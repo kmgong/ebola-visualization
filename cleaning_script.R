@@ -16,13 +16,13 @@ setwd("/Users/florenceclee/Desktop/qmssviz-project/") #edit to reflect your dire
 rowca <- read.csv("ebola-dat-rowca.csv", stringsAsFactors=FALSE)
 who <- read.csv("ebola-dat-who.csv", stringsAsFactors=FALSE)
 
-##Check dataframe
+# ROWCA Data set
 
-#General structure
-str(data)
-names(data)
+##General structure
+str(rowca)
+names(rowca)
 
-#For NA's
+##For NAs
 check <- function(data) {
   NAs <- sum(is.na(data))
   print(paste("NAs:", NAs))  # count NA's
@@ -32,6 +32,8 @@ check <- function(data) {
     data[which(!complete.cases(data)),]
   }
 }
+
+check(rowca)
 
 ##Subsetting data frame
 
