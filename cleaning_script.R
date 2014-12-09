@@ -79,6 +79,7 @@ unique(liberia$Category)
 check(liberia)
 ## 18 NA values. Keep for now.
 
+#Order by Date
 liberia <- liberia[order(liberia$Country, liberia$Date),]
 
 
@@ -119,6 +120,10 @@ unique(sierraLeone$Category)
 check(sierraLeone)
 ##28 NA values. Keep for now.
 
+#Order by Date
+sierraLeone <- sierraLeone[order(sierraLeone$Country, sierraLeone$Date),]
+
+
 #Clean Guinea dataset 
 guinea <- subset(rowcaSub, rowcaSub$Country == "Guinea", select = c(Country, Localite, Category, Value, Date))
 
@@ -149,6 +154,10 @@ unique(guinea$Category)
 
 check(guinea)
 ##115 NA values. Keep for now.
+
+#Order by Date
+guinea <- guinea[order(guinea$Country, guinea$Date),]
+
 
 ebolaData <- as.data.frame(rbind(guinea, sierraLeone, liberia))
 
