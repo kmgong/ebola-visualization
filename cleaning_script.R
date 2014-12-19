@@ -1,15 +1,19 @@
 #Check for/install necessary packages
 
 ##create function to load needed packages 
-load_install<-function(lib){
-  if(! require(lib, character.only=TRUE)) {
-    install.packages(lib, character.only=TRUE) }
-  library(lib, character.only=TRUE)
-}
+#load_install<-function(lib){
+#  if(! require(lib, character.only=TRUE)) {
+#    install.packages(lib, character.only=TRUE) }
+#  library(lib, character.only=TRUE)
+#}
 ##the required packages
-theLib<-c("plyr", "ggplot2", "scales", "gdata", "chron", "reshape2", "grid", "maps", "mapdata")
+#theLib<-c("plyr", "ggplot2", "scales", "gdata", "chron", "reshape2", "grid", "maps", "mapdata")
 ##apply
-lapply(theLib, load_install)
+#lapply(theLib, load_install)
+
+#Load packages
+library(ggplot2)
+library(scales)
 
 #Load data
 
@@ -17,10 +21,6 @@ setwd("/Users/florenceclee/Desktop/qmssviz-project/") #edit to reflect your dire
 rowca <- read.csv("ebola-dat-rowca-updated.csv", stringsAsFactors=FALSE)
 
 #Explore
-
-str(rowca)
-##will need to change some classes
-names(rowca)
 
 ##function to check for NAs
 check <- function(data) {
@@ -33,12 +33,6 @@ check <- function(data) {
   }
 }
 
-check(rowca)
-##"NAs: 0"
-
-#Convert classes
-
-##date
 rowca$Date <- as.Date(rowca$Date, "%m/%d/%y")
 ##value
 numNoCom <- function(df, col) {
@@ -55,12 +49,6 @@ rowcaSub <- subset(rowca, rowca$Category %in% c("Cases", "Deaths"))
 #Clean Liberia data
 
 liberia <- subset(rowcaSub, rowcaSub$Country == "Liberia", select = c(Country, Localite, Category, Value, Date))
-head(liberia)
-
-##checking unique levels of Localite
-unique(liberia$Localite)
-###some Localites have trailing spaces
-
 ##get rid of redundant County
 liberia$Localite <- gsub("(?:County)","", liberia$Localite)
 ##function to trim trailing spaces
@@ -70,14 +58,6 @@ trim <- function(x) {
 }
 ##trim trailing spaces
 liberia$Localite <- trim(liberia$Localite)
-unique(liberia$Localite)
-
-##check unique levels of Category
-unique(liberia$Category)
-
-##subset to "Cases" and "Deaths" only
-check(liberia)
-## 18 NA values. Keep for now.
 
 #Order by Date
 liberia <- liberia[order(liberia$Country, liberia$Date),]
@@ -86,11 +66,6 @@ liberia <- liberia[order(liberia$Country, liberia$Date),]
 #Clean Sierra Leone dataset 
 sierraLeone <- subset(rowcaSub, rowcaSub$Country == "Sierra Leone", select = c(Country, Localite, Category, Value, Date))
 
-str(sierraLeone)
-
-##checking unique levels of Localite
-unique(sierraLeone$Localite)
-##again with trailing spaces
 
 ##function to capitalize first letter of each word
 simpleCap <- function(x) {
@@ -101,24 +76,18 @@ simpleCap <- function(x) {
 
 ##fix capitalization and trailing space
 sierraLeone$Localite <- trim(sapply(sierraLeone$Localite, simpleCap))
-unique(sierraLeone$Localite)
+
 
 ##fix 'port'
 for(i in which(sierraLeone$Localite=="Port")) {
   sierraLeone$Localite[i] <- "Port Loko"
 }
-unique(sierraLeone$Localite)
+
 
 ##PROBLEM
 ##"Western area rural" and "Western area urban" are collapsed into one category for
 ##June data. It's not a big deal, since it's only two points... but maybe we can 
 ##collapse all of them?
-
-unique(sierraLeone$Category)
-###No problem with category
-
-check(sierraLeone)
-##28 NA values. Keep for now.
 
 #Order by Date
 sierraLeone <- sierraLeone[order(sierraLeone$Country, sierraLeone$Date),]
@@ -127,14 +96,8 @@ sierraLeone <- sierraLeone[order(sierraLeone$Country, sierraLeone$Date),]
 #Clean Guinea dataset 
 guinea <- subset(rowcaSub, rowcaSub$Country == "Guinea", select = c(Country, Localite, Category, Value, Date))
 
-str(guinea)
-
-##checking unique levels of Localite
-unique(guinea$Localite)
-##again with trailing spaces
 guinea$Localite <- trim(guinea$Localite)
 
-unique(guinea$Localite)
 
 ##fix weird accent translation
 for (i in which(guinea$Localite=="For\xe9cariah")) {
@@ -143,17 +106,8 @@ for (i in which(guinea$Localite=="For\xe9cariah")) {
 
 ##noticed some have multiple Localite names
 ##let's just get rid of those rows
-unique(guinea$Localite[grep("and", guinea$Localite)])
+
 guinea <- guinea[grep("and", guinea$Localite, invert=TRUE),]
-
-unique(guinea$Localite)
-##fixed
-
-unique(guinea$Category)
-###No problem with category
-
-check(guinea)
-##115 NA values. Keep for now.
 
 #Order by Date
 guinea <- guinea[order(guinea$Country, guinea$Date),]

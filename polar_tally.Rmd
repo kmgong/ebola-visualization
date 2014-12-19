@@ -1,0 +1,80 @@
+---
+title: "Ebola visualization"
+output: html_document
+---
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+setwd("~/Ebola Visualization")
+ebola <- read.csv("ebola-dat-rowca-updated.csv")
+tail(ebola)
+unique(ebola$Country)
+head(ebola$Date)
+library(chron)
+library(date)
+unique(ebola$Date)
+
+as.character(ebola$Date)
+ebola$Date <- as.Date(as.character(ebola$Date), "%m/%d/%Y")
+head(ebola$Date)
+
+library(dplyr)
+subsetted <- filter(ebola, ebola$Date >= "0014-06-02", ebola$Date < "0014-06-09", ebola$Country=="Guinea", ebola$Category=="Cases")
+head(subsetted)
+sum(as.numeric(as.character(subsetted$Value)))
+
+
+
+times <- as.vector(c("0014-06-02","0014-06-09","0014-06-16","0014-06-23","0014-06-30","0014-07-07","0014-07-14","0014-07-21","0014-07-28","0014-08-04","0014-08-11","0014-08-18","0014-08-25","0014-09-01","0014-09-08","0014-09-15","0014-09-22","0014-09-29","0014-10-06","0014-10-13","0014-10-20","0014-10-27","0014-11-03","0014-11-10","0014-11-17","0014-11-24","0014-12-01"))
+length(times)
+
+placeholder = matrix(nrow=26, ncol=7)
+placeholder[,1]=times
+placeholder
+colnames(placeholder) <- c("Date","Guinea","Liberia","Mali","Nigeria","Senegal","Sierra Leone")
+placeholder
+
+cohort <- as.vector(c("Guinea","Liberia","Mali","Nigeria","Senegal","Sierra Leone"))
+cohort
+
+for(j in 1:length(cohort)){
+for(i in 1:26){
+  a = j+1
+  b = i+1
+  subsetted <- filter(ebola, ebola$Date >= times[i], ebola$Date < times[b], ebola$Country==cohort[j], ebola$Category=="Cases")
+  
+  placeholder[i,a]=sum(as.numeric(as.character(subsetted$Value)),na.rm=TRUE)
+  
+}
+}
+
+placeholder
+placeholder[,2] = as.numeric(log(as.numeric(placeholder[,2])))*20
+placeholder[,3] = as.numeric(log(as.numeric(placeholder[,3])))*20
+placeholder[,4] = as.numeric(log(as.numeric(placeholder[,4])))*20
+placeholder[,5] = as.numeric(log(as.numeric(placeholder[,5])))*20
+placeholder[,6] = as.numeric(log(as.numeric(placeholder[,6])))*20
+placeholder[,7] = as.numeric(log(as.numeric(placeholder[,7])))*20
+placeholder
+
+
+
+
+
+
+
+
+
+
+```
+
+You can also embed plots, for example:
+
+```{r, echo=FALSE}
+plot(cars)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
